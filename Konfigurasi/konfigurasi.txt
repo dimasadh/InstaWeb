@@ -1,0 +1,115 @@
+Membuat server MySQL Replication
+
+Pada Kedua Server
+
+1. Instalasi MySQL Server
+sudo apt-get update -y
+sudo apt-get install mysql-server -y
+sudo systemctl start mysql
+sudo systemctl enable mysql
+
+
+2. Melakukan konfigurasi MySQL secure installation
+sudo mysql_secure_installation
+
+3. Mengubah autentikasi menjadi native password
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123';
+FLUSH PRIVILEGES;
+
+4. Konfigurasi root user MySQL server
+CREATE USER 'root'@'%' IDENTIFIED BY '123';
+GRANT ALL PRIVILEGES on *.* TO 'root'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+Pada server Master
+
+1. Menambahkan konfigurasi pada file mysqld.cnf
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+
+2. Restart MySQL
+sudo systemctl restart mysql
+
+3. Menambahkan user replikasi
+mysql -u root -p
+
+Jalankan perintah SQL berikut
+CREATE USER 'replica'@'10.0.0.220 ' IDENTIFIED BY '123';
+GRANT REPLICATION SLAVE ON *.* TO 'replica'@'10.0.0.220 ';
+
+4. Cek status MySQL server master
+SHOW MASTER STATUS\G
+
+Pada server Slave
+
+1. Untuk menghindari error pada UUID yang sama dengan master, hapus file auto.cnf
+sudo rm -f /var/lib/mysql/auto.cnf
+
+2. restart MySQL
+sudo systemctl restart mysql
+
+3. Menambahkan konfigurasi pada file mysqld.cnf
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+
+4. restart MySQL 
+sudo systemctl restart mysql
+
+5. Masuk kedalam MySQL console
+sudo mysql -u root -p
+
+6. Matikan proses slave dan kemudian ubah konfigurasi master yang mengarah ke server master
+STOP SLAVE;
+
+CHANGE MASTER TO MASTER_HOST='10.0.0.227', MASTER_USER='replica', MASTER_PASSWORD='123', MASTER_LOG_FILE='mysql-bin.000003', MASTER_LOG_POS=619;
+
+START SLAVE;
+
+7. Cek status slave
+SHOW SLAVE STATUS\G
+
+
+Membuat server MongoDB
+
+1. Daftar akun
+Membua link https://www.mongodb.com/cloud/atlas/register
+
+2. Membuat Cluster
+Pada Menu Databases, pilih create
+Pilih bagian Shared
+Pada bagian Provider & Region, pilih aws dan Singapore
+Pada bagian Cluster Tier, pilih M0 Sandbox
+Pada bagian Cluster Name, tulis nama Cluster
+Pilih Create Cluster
+
+3. Melakukan konfigurasi Database Access
+Pada Menu Database Access, pilih Add New Database User
+Pada bagian Authentication Method, pilih password
+Kemudian isi username dan password pada form yang disediakan
+Pada bagian Built-in Role pilih role yang diinginkan
+Pilih Add User
+
+4. Melakukan konfigurasi Network Access
+Pada menu Network Access, pilih Add IP Address
+Pilih Allow accesss from anywhere
+Pilih Confirm
+
+Konfigurasi pada Laravel
+
+1. Install package mongodb menggunakan Composer pada project laravel
+composer require jenssegers/mongodb
+
+2. Tambahkan service provider berikut pada file config/app.php
+Jenssegers\Mongodb\MongodbServiceProvider::class,
+
+3. Tambahkan konfigurasi server MySQLReplication dan MongoDB pada file database.php
+
+4. Pada class Model yang menggunakan koneksi MongoDB, ubah use Illuminate\Database\Eloquent\Model; menjadi use Jenssegers\Mongodb\Eloquent\Model; agar model dapat disesuaikan dengan mongodb.
+
+5. Pada migration dan model, tambahkan variabel $connection untuk menentukan koneksi database mana yang akan dipakai pada tiap migration dan model nya.
+
+use Jenssegers\Mongodb\Eloquent\Model;
+
+class Profile extends Model
+{
+	$connection = 'MongoDB'
+	//
+}

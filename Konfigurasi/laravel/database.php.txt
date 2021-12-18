@@ -1,0 +1,39 @@
+'connections' => [
+
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'dsn' => 'mongodb+srv://dimasadh:123@instamongo.hhrie.mongodb.net/InstaDB?retryWrites=true&w=majority',
+            'database' => 'InstaDB',
+        ],
+
+        'mysqlReplication' => [
+            'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
+            'read' => [
+                'host' => [
+                    '44.192.90.227',        // <-- slave
+                    '18.210.22.142',     // <-- master
+                ]
+            ],
+            'write' => [
+                'host' => [
+                    '18.210.22.142',         // <-- master
+                    // '44.192.90.227',      // <-- slave
+                ]
+            ],
+            'port' => env('DB_PORT', '3306'),
+            'database' => 'INSTAWEB',
+            'username' => 'root',
+            'password' => '123',
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+]
