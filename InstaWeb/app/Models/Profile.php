@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Jenssegers\Mongodb\Eloquent\Model;
+// use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 
 class Profile extends Model
@@ -24,5 +24,10 @@ class Profile extends Model
         return $this->belongsTo(User::class);
     }
 
-    protected $connection = 'mongodb';
+    public function followers()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    // protected $connection = 'mongodb';
 }

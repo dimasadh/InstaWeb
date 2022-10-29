@@ -13,18 +13,16 @@ class ProfilesController extends Controller
     public function index($user)
     {
         $user = User::findOrFail($user);
-        $posts = Post::where('user_id', $user->id)->OrderBy('created_at', 'DESC')->get();
+        $followStatus = ((auth()->user()) ? auth()->user()->following->contains($user->id) : false);
+        $followingCount = $user->following->count();
+        $followersCount = $user->profile->followers->count();
 
         return view('profiles.index', [
             'user' => $user,
+            'followStatus' => $followStatus,
+            'followingCount' => $followingCount,
+            'followersCount' => $followersCount
         ]);
-
-
-        // $user = User::findOrFail($user);
-        
-        // return view('profiles.index', [
-        //     'user' => $user,
-        // ]);
     }
 
     public function edit(User $user)

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Jenssegers\Mongodb\Eloquent\Model;
+// use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
@@ -22,5 +22,5 @@ class Post extends Model
         return $this->hasMany(Comment::class)->orderBy('created_at', 'DESC');
     }
 
-    protected $connection = 'mongodb';
+    // protected $connection = 'mongodb';
 }

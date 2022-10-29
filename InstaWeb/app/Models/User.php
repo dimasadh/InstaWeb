@@ -13,7 +13,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
     use HybridRelations;
 
-    protected $connection = 'mysqlReplication';
+    // protected $connection = 'mysqlReplication';
 
     /**
      * The attributes that are mass assignable.
@@ -69,5 +69,10 @@ class User extends Authenticatable
     public function comment()
     {
         return $this->hasMany(Comment::class)->orderBy('created_at', 'DESC');
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(Profile::class);
     }
 }

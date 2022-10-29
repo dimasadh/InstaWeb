@@ -18,9 +18,7 @@ class CommentsController extends Controller
 
     public static function getComments(Post $post)
     {
-        $comments = Comment::where('post_id', $post->id)->OrderBy('created_at', 'DESC')->get();
-        
-        return $comments;
+        return Comment::where('post_id', $post->id)->OrderBy('created_at', 'DESC')->get();
     }
 
     public function store(Request $request, Post $post)
@@ -30,17 +28,16 @@ class CommentsController extends Controller
         ]);
 
         $post = Post::find($post->id);
-        if($post){
+        if ($post){
             Comment::create([
                 'comment' => $data['comment'],
                 'user_id' => Auth::id(),
                 'post_id' => $post->id,
             ]);
     
-            return Redirect::back()->with('message','Operation Successful!');
-        }
-        else{
-            return Redirect::back()->with('message','Something was wrong!');
+            return Redirect::back()->with('message', 'Operation Successful!');
+        } else {
+            return Redirect::back()->with('message', 'Something was wrong!');
         }
 
     }
@@ -49,18 +46,17 @@ class CommentsController extends Controller
         $this->authorize('delete', $comment);
 
         $comment = Comment::find($comment->id);
-        if($comment){
+        if ($comment) {
             $destroy = Comment::destroy($comment->id);
             if ($destroy){
-                return Redirect::back()->with('message','Operation Successful!');
+                return Redirect::back()->with('message', 'Operation Successful!');
         
-            }else{
-                return Redirect::back()->with('message','Operation Failed!');
+            } else {
+                return Redirect::back()->with('message', 'Operation Failed!');
             
             }
-        }
-        else{
-            return Redirect::back()->with('message','Something was wrong!');
+        } else {
+            return Redirect::back()->with('message', 'Something was wrong!');
         }
 
     }

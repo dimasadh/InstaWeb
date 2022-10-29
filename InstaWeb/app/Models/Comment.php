@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Jenssegers\Mongodb\Eloquent\Model;
+// use Jenssegers\Mongodb\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
@@ -22,5 +22,5 @@ class Comment extends Model
         return $this->belongsTo(Post::class);
     }
 
-    protected $connection = 'mongodb';
+    // protected $connection = 'mongodb';
 }

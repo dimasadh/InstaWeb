@@ -54,8 +54,6 @@ class PostsController extends Controller
 
     public function show(\App\Models\Post $post)
     {
-        $comments = CommentsController::getComments($post);
-
-        return View::make('posts.show',compact('post'));
+        return View::make('posts.show', compact('post'));
     }
 }
