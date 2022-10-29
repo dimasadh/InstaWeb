@@ -7,6 +7,7 @@ use App\Models\Profile;
 use App\Models\User;
 use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ProfilesController extends Controller
 {
@@ -14,12 +15,29 @@ class ProfilesController extends Controller
     {
         $user = User::findOrFail($user);
         $followStatus = ((auth()->user()) ? auth()->user()->following->contains($user->id) : false);
-        $followingCount = $user->following->count();
-        $followersCount = $user->profile->followers->count();
+        $postsCount = Cache::remember(
+            'count.posts.' . $user->id,
+            now()->addSeconds(30),
+            function () use ($user) {
+                return $user->posts->count();
+            });
+        $followingCount = Cache::remember(
+            'count.following.' . $user->id,
+            now()->addSeconds(30),
+            function () use ($user) {
+                return $user->following->count();
+            });
+        $followersCount = Cache::remember(
+            'count.followers.' . $user->id,
+            now()->addSeconds(30),
+            function () use ($user) {
+                return $user->profile->followers->count();
+            });
 
         return view('profiles.index', [
             'user' => $user,
             'followStatus' => $followStatus,
+            'postsCount' => $postsCount,
             'followingCount' => $followingCount,
             'followersCount' => $followersCount
         ]);
